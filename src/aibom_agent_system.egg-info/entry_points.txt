@@ -1,0 +1,2 @@
+[console_scripts]
+aibom-agent = aibom_agent.main:main

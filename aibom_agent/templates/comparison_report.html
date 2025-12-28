@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIBOM Comparison Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { border-bottom: 2px solid #007acc; padding-bottom: 20px; margin-bottom: 30px; }
+        .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .model-card { background: #f8f9fa; padding: 20px; border-radius: 5px; border-left: 4px solid #007acc; }
+        .insights { background: #e7f3ff; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
+        .common-components { background: #d4edda; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .unique-components { background: #fff3cd; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .security-comparison { background: #f8d7da; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        h1, h2, h3 { color: #333; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-high { background: #dc3545; color: white; }
+        .badge-medium { background: #ffc107; color: black; }
+        .badge-low { background: #28a745; color: white; }
+        .component-list { max-height: 200px; overflow-y: auto; }
+        .component-item { background: white; padding: 10px; margin: 5px 0; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 AI Model Comparison Report</h1>
+            <h2>{{ model_names | join(' vs ') }}</h2>
+            <p><strong>Generated:</strong> {{ timestamp }}</p>
+            <p><strong>Models Analyzed:</strong> {{ model_names | length }}</p>
+        </div>
+        
+        <div class="insights">
+            <h3>🧠 AI-Generated Insights</h3>
+            <p><strong>Summary:</strong> {{ result.insights.summary }}</p>
+            
+            {% if result.insights.key_differences %}
+            <h4>🔑 Key Differences</h4>
+            <ul>
+            {% for diff in result.insights.key_differences %}
+                <li>{{ diff }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+            
+            <p><strong>Risk Assessment:</strong> {{ result.insights.risk_assessment }}</p>
+        </div>
+        
+        <div class="comparison-grid">
+            {% for individual_result in result.individual_results %}
+            <div class="model-card">
+                <h3>{{ individual_result.model_name }}</h3>
+                <p><strong>Risk Level:</strong> <span class="badge badge-{{ individual_result.security_analysis.risk_level.lower() }}">{{ individual_result.security_analysis.risk_level }}</span></p>
+                <p><strong>Risk Score:</strong> {{ individual_result.security_analysis.risk_score }}/10</p>
+                <p><strong>Components:</strong> {{ individual_result.aibom.components | length }}</p>
+                <p><strong>Vulnerabilities:</strong> {{ individual_result.security_analysis.vulnerabilities | length }}</p>
+                <p><strong>License:</strong> {{ individual_result.model_info.license or 'Not specified' }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="common-components">
+            <h3>🤝 Common Components ({{ result.comparison.common_components | length }})</h3>
+            <div class="component-list">
+                {% for component in result.comparison.common_components %}
+                <div class="component-item">
+                    <strong>{{ component.get('name', 'Unknown') }}</strong> - {{ component.get('type', 'unknown') }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="unique-components">
+            <h3>🎯 Unique Components</h3>
+            {% for model_name, components in result.comparison.unique_components.items() %}
+            <h4>{{ model_name }} ({{ components | length }} unique)</h4>
+            <div class="component-list">
+                {% for component in components %}
+                <div class="component-item">
+                    <strong>{{ component.get('name', 'Unknown') }}</strong> - {{ component.get('type', 'unknown') }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="security-comparison">
+            <h3>🔒 Security Comparison</h3>
+            <p><strong>Highest Risk Model:</strong> {{ result.comparison.security_comparison.get('highest_risk_model', 'N/A') }}</p>
+            <p><strong>Lowest Risk Model:</strong> {{ result.comparison.security_comparison.get('lowest_risk_model', 'N/A') }}</p>
+            
+            {% if result.insights.security_recommendations %}
+            <h4>Security Recommendations</h4>
+            <ul>
+            {% for rec in result.insights.security_recommendations %}
+                <li>{{ rec }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        
+        <div class="footer">
+            <p><small>Generated by AIBOM Agent System using AWS AgentCore Runtime</small></p>
+        </div>
+    </div>
+</body>
+</html>
+        
